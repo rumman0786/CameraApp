@@ -32,7 +32,10 @@ public class MainActivity extends Activity {
 
     public void takePicture(View view) {
         Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
-        File photo = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "img_"+count+".jpg");
+        File imageFolder = new File(Environment.getExternalStorageDirectory(), "CameraApp");
+//        File photo = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "img_"+count+".jpg");
+        imageFolder.mkdirs();
+        File photo = new File(imageFolder, "img_"+count+".jpg");
         count++;
         imageUri = Uri.fromFile(photo);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
