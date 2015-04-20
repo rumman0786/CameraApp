@@ -2,7 +2,10 @@ package camera.rumman.com.cameraapp;
 
 import android.app.Activity;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -23,11 +26,23 @@ public class MainActivity extends Activity {
     private Uri imageUri;
     public int count = 1 ;
     private ImageView imageView ;
+    public static final String CameraPREFERENCES = "CameraPrefs" ;
+    public static final String CountKey = "countKey";
+    private SharedPreferences sharedPreferences;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        initialize();
         setContentView(R.layout.activity_main);
+    }
+
+    private void initialize() {
         imageView = (ImageView) findViewById(R.id.img_camera);
+        sharedPreferences = getSharedPreferences(CameraPREFERENCES , Context.MODE_PRIVATE);
+        if(sharedPreferences.contains(CountKey)){
+            count = sharedPreferences.getInt(CountKey, 0);
+        }
     }
 
     public void takePicture(View view) {
@@ -37,6 +52,9 @@ public class MainActivity extends Activity {
         imageFolder.mkdirs();
         File photo = new File(imageFolder, "img_"+count+".jpg");
         count++;
+        Editor editor = sharedPreferences.edit();
+        editor.putInt(CountKey , count);
+        editor.commit();
         imageUri = Uri.fromFile(photo);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
         startActivityForResult(intent,TAKE_PICTURE);
